@@ -1,6 +1,6 @@
 from aiodocker import Docker
 from aiodocker.containers import DockerContainer
-from asyncio import ensure_future
+from asyncio import ensure_future, sleep
 from signalslot import Signal
 
 
@@ -26,6 +26,7 @@ class DockerMonitor:
 		while channel:
 			event = await channel.get()
 			if event['Type'] == 'container' and event['status'] == 'start':
+				await sleep(1000)
 				container = await self.docker.containers.get(event['id'])
 				self.handle(container)
 
