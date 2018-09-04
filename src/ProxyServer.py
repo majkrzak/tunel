@@ -3,18 +3,16 @@ from ssl import SSLContext, SSLObject, PROTOCOL_TLSv1_2
 
 from .utils.pipe import pipe
 
-HTTPS_PORT = 443
-
 
 class ProxyServer:
 	contexts: dict
 	targets: dict
 
-	def __init__(self):
+	def __init__(self, port: int):
 		self.contexts = {}
 		self.targets = {}
 
-		ensure_future(start_server(self.handler, '', HTTPS_PORT, ssl=self.ssl()))
+		ensure_future(start_server(self.handler, '', port, ssl=self.ssl()))
 
 	def __setitem__(self, key, value):
 		self.contexts[key] = value['ssl']

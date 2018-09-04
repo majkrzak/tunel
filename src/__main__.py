@@ -8,12 +8,14 @@ from .ProxyServer import ProxyServer
 from .utils.ssl_factory import ssl_factory
 
 DIRECTORY = 'https://acme-v01.api.letsencrypt.org/directory'
+HTTP_PORT = 80
+HTTPS_PORT = 443
 
 context = {}
 docker_monitor = DockerMonitor()
 certificate_issuer = CertificateIssuer(DIRECTORY)
-challenger = Challenger()
-proxy_server = ProxyServer()
+challenger = Challenger(HTTP_PORT)
+proxy_server = ProxyServer(HTTPS_PORT)
 
 
 @docker_monitor.domain_attached.connect

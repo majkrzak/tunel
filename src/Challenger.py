@@ -1,15 +1,14 @@
 from asyncio import ensure_future, start_server
 from asyncio.streams import StreamWriter, StreamReader
 
-HTTP_PORT = 80
 CRLF = '\r\n'
 
 
 class Challenger:
 	challenges: dict = {}
 
-	def __init__(self):
-		ensure_future(start_server(self.handler, '', HTTP_PORT))
+	def __init__(self, port: int):
+		ensure_future(start_server(self.handler, '', port))
 
 	def __setitem__(self, key, value):
 		self.challenges[key] = value
