@@ -13,16 +13,14 @@ BUILD_DEPENDECIES = [
 	'wheel'
 ]
 DOCKERFILE = f'''
-	FROM python:3.7 AS build
+	FROM python:3.7-slim AS build
 	COPY . .
 	RUN python setup.py bdist_wheel --dist-dir .
 	
-	FROM python:3.7
+	FROM python:3.7-slim
 	COPY --from=build {NAME}-0.0.0-py3-none-any.whl .
 	RUN python3 -m pip install {NAME}-0.0.0-py3-none-any.whl
 	
-	EXPOSE 80
-	EXPOSE 443
 	ENTRYPOINT ["python3", "-m", "{NAME}"]
 	CMD []
 '''
@@ -81,8 +79,7 @@ def deploy():
 		volumes=['/var/run/docker.sock:/var/run/docker.sock'],
 		ports={'80': '80', '443': '443'},
 		detach=True,
-		restart_policy={'Name': 'always'},
-		publish_all_ports=True
+		restart_policy={'Name': 'always'}
 	)
 
 
