@@ -27,19 +27,12 @@ DOCKERFILE = f'''
 
 
 def cmd(run):
-	class Command(setuptools.Command):
-		user_options = []
-
-		def initialize_options(self):
-			pass
-
-		def finalize_options(self):
-			pass
-
-		def run(self):
-			run()
-
-	return Command
+	return type(run.__name__, (setuptools.Command,), {
+		'user_options': [],
+		'initialize_options': lambda _: None,
+		'finalize_options': lambda _: None,
+		'run': lambda _: run(),
+	})
 
 
 @cmd
