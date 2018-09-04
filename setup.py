@@ -4,7 +4,6 @@ NAME = 'tunel'
 REPOSITORY = 'https://majkrzak@bitbucket.org/majkrzak/tunel.git'
 CORE_DEPENDENCIES = [
 	'signalslot',
-	'aiohttp',
 	'aiodocker',
 	'acme'
 ]
@@ -31,7 +30,7 @@ def cmd(run):
 		'user_options': [],
 		'initialize_options': lambda _: None,
 		'finalize_options': lambda _: None,
-		'run': lambda _: run(),
+		'run': staticmethod(run),
 	})
 
 

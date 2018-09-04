@@ -3,7 +3,7 @@ from signalslot import Slot
 
 from .DockerMonitor import DockerMonitor
 from .CertificateIssuer import CertificateIssuer
-from .RedirectServer import RedirectServer
+from .Challenger import Challenger
 from .ProxyServer import ProxyServer
 from .utils.ssl_factory import ssl_factory
 
@@ -12,7 +12,7 @@ DIRECTORY = 'https://acme-v01.api.letsencrypt.org/directory'
 context = {}
 docker_monitor = DockerMonitor()
 certificate_issuer = CertificateIssuer(DIRECTORY)
-redirect_server = RedirectServer()
+challenger = Challenger()
 proxy_server = ProxyServer()
 
 
@@ -31,13 +31,13 @@ def domain_attached_handler(domain: str, target: str) -> None:
 @certificate_issuer.challenge_requested.connect
 @Slot
 def challenge_requested_handler(key: str, value: str) -> None:
-	redirect_server[key] = value
+	challenger[key] = value
 
 
 @certificate_issuer.challenge_answered.connect
 @Slot
 def challenge_answered_handler(key: str) -> None:
-	del redirect_server[key]
+	del challenger[key]
 
 
 @certificate_issuer.certificate_issued.connect

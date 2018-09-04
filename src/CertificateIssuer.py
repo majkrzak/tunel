@@ -42,7 +42,7 @@ class CertificateIssuer:
 
 		self.challenge_requested.emit(
 			key=challb.chall.path,
-			value=challb.chall.validation(self.key).encode()
+			value=challb.chall.validation(self.key).encode().decode()
 		)
 
 		await self._ath(self.client.answer_challenge, challb, challb.chall.response(self.key))
