@@ -1,5 +1,6 @@
 from asyncio import get_event_loop
 from signalslot import Slot
+from os import environ
 
 from .DockerMonitor import DockerMonitor
 from .CertificateIssuer import CertificateIssuer
@@ -7,9 +8,9 @@ from .Challenger import Challenger
 from .ProxyServer import ProxyServer
 from .utils.ssl_factory import ssl_factory
 
-DIRECTORY = 'https://acme-v01.api.letsencrypt.org/directory'
-HTTP_PORT = 80
-HTTPS_PORT = 443
+DIRECTORY = environ.get('DIRECTORY', 'https://acme-v1.api.letsencrypt.org/directory')
+HTTP_PORT = int(environ.get('HTTP_PORT', 80))
+HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 
 context = {}
 docker_monitor = DockerMonitor()
