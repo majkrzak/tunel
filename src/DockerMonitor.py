@@ -1,17 +1,18 @@
 from aiodocker import Docker
 from aiodocker.containers import DockerContainer
 from asyncio import ensure_future, sleep
-from signalslot import Signal
+
+from .utils.AsyncSignal import AsyncSignal
 
 
 class DockerMonitor:
 	docker: Docker
 
-	domain_attached: Signal
+	domain_attached: AsyncSignal
 
 	def __init__(self):
 		self.docker = Docker()
-		self.domain_attached = Signal(args=['domain', 'target'])
+		self.domain_attached = AsyncSignal()
 
 		ensure_future(self.query_running())
 		ensure_future(self.query_started())
@@ -19,7 +20,7 @@ class DockerMonitor:
 	async def query_running(self) -> None:
 		containers = await self.docker.containers.list()
 		for container in containers:
-			self.handle(container)
+			await self.handle(container)
 
 	async def query_started(self) -> None:
 		channel = self.docker.events.subscribe()
@@ -28,11 +29,11 @@ class DockerMonitor:
 			if event['Type'] == 'container' and event['status'] == 'start':
 				await sleep(1000)
 				container = await self.docker.containers.get(event['id'])
-				self.handle(container)
+				await self.handle(container)
 
-	def handle(self, container: DockerContainer) -> None:
+	async def handle(self, container: DockerContainer) -> None:
 		try:
-			self.domain_attached.emit(
+			await self.domain_attached.emit(
 				domain=container['Labels']['domain'],
 				target=next(iter(container['NetworkSettings']['Networks'].values()))['IPAddress']
 			)

@@ -17,7 +17,7 @@ class Challenger:
 		del self.challenges[key]
 
 	async def handler(self, reader: StreamReader, writer: StreamWriter):
-		request = self.parse((await reader.readuntil((CRLF + CRLF).encode())).decode())
+		request = self.parse((await reader.readuntil((CRLF * 2).encode())).decode())
 
 		if request['method'] == 'GET' and request['path'] in self.challenges:
 			writer.write(self.respond(self.challenges[request['path']]).encode())
@@ -28,7 +28,7 @@ class Challenger:
 
 	@staticmethod
 	def parse(data: str) -> dict:
-		request_line, *header_lines = data.strip('\r\n').split('\r\n')
+		request_line, *header_lines = data.strip(CRLF).split(CRLF)
 
 		method, path = request_line.split(' ')[:2]
 		headers = dict(header_line.split(': ', 1) for header_line in header_lines)
@@ -41,8 +41,18 @@ class Challenger:
 
 	@staticmethod
 	def respond(payload: str) -> str:
-		return f'HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: {len(payload)}\r\n\r\n{payload}'
+		return CRLF.join([
+			'HTTP/1.1 200 OK',
+			'Content-Type: application/octet-stream',
+			f'Content-Length: {len(payload)}',
+			'',
+			payload,
+		])
 
 	@staticmethod
 	def redirect(host: str, path: str) -> str:
-		return f'HTTP/1.1 301 Moved Permanently\r\nLocation: https://{host}{path}'
+		return CRLF.join([
+			'HTTP/1.1 301 Moved Permanently',
+			f'Location: https://{host}{path}',
+			'',
+		])

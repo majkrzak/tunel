@@ -3,7 +3,6 @@ import setuptools
 NAME = 'tunel'
 REPOSITORY = 'https://majkrzak@bitbucket.org/majkrzak/tunel.git'
 CORE_DEPENDENCIES = [
-	'signalslot',
 	'aiodocker',
 	'acme'
 ]
