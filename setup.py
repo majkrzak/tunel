@@ -3,8 +3,9 @@ import setuptools
 NAME = 'tunel'
 REPOSITORY = 'https://majkrzak@bitbucket.org/majkrzak/tunel.git'
 CORE_DEPENDENCIES = [
+	'cryptography',
 	'aiodocker',
-	'acme'
+	'aiohttp'
 ]
 BUILD_DEPENDECIES = [
 	'docker',
