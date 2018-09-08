@@ -1,4 +1,4 @@
-from asyncio import ensure_future, start_server, open_connection, gather
+from asyncio import create_task, start_server, open_connection, gather
 from ssl import SSLContext, SSLObject, PROTOCOL_TLSv1_2
 
 from .utils.pipe import pipe
@@ -12,7 +12,7 @@ class ProxyServer:
 		self.contexts = {}
 		self.targets = {}
 
-		ensure_future(start_server(self.handler, '', port, ssl=self.ssl()))
+		create_task(start_server(self.handler, '', port, ssl=self.ssl()))
 
 	def __setitem__(self, key, value):
 		self.contexts[key] = value['ssl']

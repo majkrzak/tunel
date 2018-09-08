@@ -34,6 +34,9 @@ class Issuer:
 		pass
 
 	async def __aenter__(self):
+		if self.acc:
+			return
+
 		async with self.lock, ClientSession(raise_for_status=True) as session:
 			async with session.get(self.directory) as response:
 				data = await response.json()

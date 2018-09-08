@@ -1,4 +1,4 @@
-from asyncio import get_event_loop
+from asyncio import get_event_loop, ensure_future
 from os import environ
 
 from .DockerMonitor import DockerMonitor
@@ -13,29 +13,28 @@ KEY = gen_ecc()
 HTTP_PORT = int(environ.get('HTTP_PORT', 80))
 HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 
-context = {}
-docker_monitor = DockerMonitor()
-issuer = Issuer(DIRECTORY, KEY)
-challenger = Challenger(HTTP_PORT)
-proxy_server = ProxyServer(HTTPS_PORT)
+
+async def main():
+	context = {}
+	docker_monitor = DockerMonitor()
+	issuer = Issuer(DIRECTORY, KEY)
+	challenger = Challenger(HTTP_PORT)
+	proxy_server = ProxyServer(HTTPS_PORT)
+
+	async for domain, target in docker_monitor:
+		if domain in context:
+			context[domain]['target'] = target
+		else:
+			async with issuer:
+				async with issuer(gen_ecc(), domain) as issuance:
+					challenger[f'/.well-known/acme-challenge/{issuance:token}'] = f'{issuance:token}.{issuance:auth}'
+
+					context[domain] = {
+						'target': target,
+						'ssl': ssl_factory(domain, await issuance())
+					}
+					proxy_server[domain] = context[domain]
 
 
-@docker_monitor.domain_attached.connect
-async def domain_attached_handler(domain: str, target: str) -> None:
-	print(domain, target)
-
-	if domain in context:
-		context[domain]['target'] = target
-	else:
-		async with issuer:
-			async with issuer(gen_ecc(), domain) as issuance:
-				challenger[f'/.well-known/acme-challenge/{issuance:token}'] = f'{issuance:token}.{issuance:auth}'
-
-				context[domain] = {
-					'target': target,
-					'ssl': ssl_factory(domain, await issuance())
-				}
-				proxy_server[domain] = context[domain]
-
-
+ensure_future(main())
 get_event_loop().run_forever()
