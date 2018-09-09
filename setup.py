@@ -20,6 +20,8 @@ DOCKERFILE = f'''
 	COPY --from=build {NAME}-0.0.0-py3-none-any.whl .
 	RUN python3 -m pip install {NAME}-0.0.0-py3-none-any.whl
 	
+	VOLUME /var/ctx
+	WORKDIR /var/ctx
 	ENTRYPOINT ["python3", "-m", "{NAME}"]
 	CMD []
 '''
@@ -68,7 +70,7 @@ def deploy():
 	from_env().containers.run(
 		image=NAME,
 		name=NAME,
-		volumes=['/var/run/docker.sock:/var/run/docker.sock'],
+		volumes=['/var/run/docker.sock:/var/run/docker.sock', f'{NAME}:/var/ctx'],
 		ports={'80': '80', '443': '443'},
 		detach=True,
 		restart_policy={'Name': 'always'}

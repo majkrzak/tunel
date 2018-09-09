@@ -5,22 +5,18 @@ from .utils.pipe import pipe
 
 
 class ProxyServer:
-	contexts: dict
-	targets: dict
+	configs: dict
 
 	def __init__(self, port: int):
-		self.contexts = {}
-		self.targets = {}
+		self.configs = {}
 
 		create_task(start_server(self.handler, '', port, ssl=self.ssl()))
 
-	def __setitem__(self, key, value):
-		self.contexts[key] = value['ssl']
-		self.targets[key] = value['target']
+	def __getitem__(self, item):
+		if item not in self.configs:
+			self.configs[item] = Config()
 
-	def __delitem__(self, key):
-		del self.contexts[key]
-		del self.targets[key]
+		return self.configs[item]
 
 	def ssl(self):
 		ssl = SSLContext(PROTOCOL_TLSv1_2)
@@ -28,17 +24,42 @@ class ProxyServer:
 		return ssl
 
 	def sni(self, ssl_object: SSLObject, domain: str, _):
-		setattr(ssl_object, 'context', self.contexts[domain])
+		setattr(ssl_object, 'context', self.configs[domain].context)
 		setattr(ssl_object, 'domain', domain)
 
 	async def handler(self, local_reader, local_writer):
 		domain = local_writer.get_extra_info('ssl_object').domain
 
 		try:
-			remote_reader, remote_writer = await open_connection(self.targets[domain], 80)
+			remote_reader, remote_writer = await open_connection(self.configs[domain].target, 80)
 			await gather(
 				pipe(local_reader, remote_writer),
 				pipe(remote_reader, local_writer)
 			)
 		finally:
 			local_writer.close()
+
+
+class Config:
+
+	def __init__(self):
+		self._target = None
+		self._context = None
+
+	@property
+	def target(self):
+		return self._target
+
+	@target.setter
+	def target(self, value):
+		self._target = value
+
+	@property
+	def context(self):
+		return self._context
+
+	@target.setter
+	def target(self, value):
+		ctx = SSLContext(PROTOCOL_TLSv1_2)
+		ctx.load_cert_chain(value)
+		self._context = ctx

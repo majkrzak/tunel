@@ -3,10 +3,12 @@ from asyncio.locks import Lock
 from json import dumps as to_json
 
 from aiohttp import ClientSession
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import (ECDSA, EllipticCurvePrivateKey, EllipticCurvePublicKey,
                                                           EllipticCurvePrivateKeyWithSerialization)
 from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
 from cryptography.hazmat.primitives.hashes import SHA256
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from utils.b64url import b64url
 from utils.gen_csr import gen_csr
@@ -26,9 +28,9 @@ class Issuer:
 
 	nonce: str
 
-	def __init__(self, directory: str, key: EllipticCurvePrivateKey):
+	def __init__(self, directory: str, key: str):
 		self.directory = directory
-		self.key = key
+		self.key = load_pem_private_key(key, None, default_backend())
 		self.lock = Lock()
 		self.auth = jwk_auth(jwk(self.key.public_key()))
 		pass
@@ -57,7 +59,7 @@ class Issuer:
 				self.nonce = response.headers['Replay-Nonce']
 				self.acc = response.headers['Location']
 
-	def __call__(self, key, domain):
+	def __call__(self, key: str, domain: str):
 		return Issuance(self, key, domain)
 
 	async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -95,9 +97,9 @@ class Issuance:
 
 	http01: dict
 
-	def __init__(self, issuer, key, domain):
+	def __init__(self, issuer: Issuer, key: str, domain: str):
 		self.issuer = issuer
-		self.key = key
+		self.key = load_pem_private_key(key, None, default_backend())
 		self.domain = domain
 
 	async def __aenter__(self):
