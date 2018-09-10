@@ -8,11 +8,10 @@ class Context:
 		self.base = base
 		pass
 
-	def __setitem__(self, key: str, val: str) -> str:
+	def __setitem__(self, key: str, val: str) -> None:
 		with open(self(key), 'w') as f:
 			f.write(val)
 			f.flush()
-		return val
 
 	def __getitem__(self, key) -> str:
 		with open(self(key)) as f:

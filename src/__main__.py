@@ -1,5 +1,6 @@
 from asyncio import get_event_loop, ensure_future
 from os import environ
+from operator import setitem
 
 from .Context import Context
 from .DockerMonitor import DockerMonitor
@@ -10,7 +11,6 @@ from .utils.gen_ecc import gen_ecc
 
 DIRECTORY = environ.get('DIRECTORY', 'https://acme-v02.api.letsencrypt.org/directory')
 CONTEXT = environ.get('CONTEXT', '.')
-KEY = gen_ecc()
 HTTP_PORT = int(environ.get('HTTP_PORT', 80))
 HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 
@@ -18,7 +18,8 @@ HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 async def main():
 	context = Context(CONTEXT)
 	docker_monitor = DockerMonitor()
-	issuer = Issuer(DIRECTORY, context['key'] if 'key' in context else context.__setitem__('key', gen_ecc()))
+
+	issuer = Issuer(DIRECTORY, 'key' not in context and setitem(context, 'key', gen_ecc()) or context['key'])
 	challenger = Challenger(HTTP_PORT)
 	proxy_server = ProxyServer(HTTPS_PORT)
 
