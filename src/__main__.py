@@ -1,9 +1,10 @@
-from asyncio import get_event_loop, ensure_future
+from asyncio import get_event_loop, ensure_future, create_task
 from os import environ
 from operator import setitem
 
 from .Context import Context
 from .DockerMonitor import DockerMonitor
+from .Scheduler import Scheduler
 from .Issuer import Issuer
 from .Challenger import Challenger
 from .ProxyServer import ProxyServer
@@ -18,7 +19,7 @@ HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 async def main():
 	context = Context(CONTEXT)
 	docker_monitor = DockerMonitor()
-
+	scheduler = Scheduler()
 	issuer = Issuer(DIRECTORY, 'key' not in context and setitem(context, 'key', gen_ecc()) or context['key'])
 	challenger = Challenger(HTTP_PORT)
 	proxy_server = ProxyServer(HTTPS_PORT)
@@ -31,7 +32,8 @@ async def main():
 					context[domain] = await issuance()
 
 		proxy_server[domain].target = target
-		proxy_server[domain].context = context[domain]
+		proxy_server[domain].context = context(domain)
+		create_task(scheduler(context[domain]))
 
 
 ensure_future(main())
