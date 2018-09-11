@@ -30,7 +30,7 @@ class Issuer:
 
 	def __init__(self, directory: str, key: str):
 		self.directory = directory
-		self.key = load_pem_private_key(key, None, default_backend())
+		self.key = load_pem_private_key(key.encode(), None, default_backend())
 		self.lock = Lock()
 		self.auth = jwk_auth(jwk(self.key.public_key()))
 		pass
@@ -99,7 +99,7 @@ class Issuance:
 
 	def __init__(self, issuer: Issuer, key: str, domain: str):
 		self.issuer = issuer
-		self.key = load_pem_private_key(key, None, default_backend())
+		self.key = load_pem_private_key(key.encode(), None, default_backend())
 		self.domain = domain
 
 	async def __aenter__(self):

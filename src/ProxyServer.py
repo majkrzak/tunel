@@ -58,8 +58,8 @@ class Config:
 	def context(self):
 		return self._context
 
-	@target.setter
-	def target(self, value):
+	@context.setter
+	def context(self, value):
 		ctx = SSLContext(PROTOCOL_TLSv1_2)
 		ctx.load_cert_chain(value)
 		self._context = ctx
