@@ -12,8 +12,9 @@ from .Router import Router
 from .utils.gen_ecc import gen_ecc
 from .utils.call import call
 
-DIRECTORY = environ.get('DIRECTORY', 'https://acme-v02.api.letsencrypt.org/directory')
+
 CONTEXT = environ.get('CONTEXT', '.')
+DIRECTORY = environ.get('DIRECTORY', 'https://acme-v02.api.letsencrypt.org/directory')
 HTTP_PORT = int(environ.get('HTTP_PORT', 80))
 HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 

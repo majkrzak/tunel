@@ -10,10 +10,10 @@ from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
-from utils.b64url import b64url
-from utils.gen_csr import gen_csr
-from utils.jwk_auth import jwk_auth
-from utils.key_pem import key_pem
+from .utils.b64url import b64url
+from .utils.gen_csr import gen_csr
+from .utils.jwk_auth import jwk_auth
+from .utils.key_pem import key_pem
 
 
 class Issuer:
