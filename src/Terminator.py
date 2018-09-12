@@ -26,7 +26,6 @@ class Terminator:
 	def sni(self, ssl_object: SSLObject, domain: str, _) -> int:
 		if domain not in self.contexts:
 			return ALERT_DESCRIPTION_UNRECOGNIZED_NAME
-		print(domain)
 		setattr(ssl_object, 'context', self.contexts[domain])
 		setattr(ssl_object, 'domain', domain)
 
