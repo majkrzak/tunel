@@ -1,5 +1,5 @@
 from asyncio import create_task, start_server, Queue, StreamWriter, StreamReader
-from ssl import SSLContext, SSLObject, PROTOCOL_TLSv1_2
+from ssl import SSLContext, SSLObject, PROTOCOL_TLSv1_2, ALERT_DESCRIPTION_UNRECOGNIZED_NAME
 
 
 class Terminator:
@@ -23,7 +23,10 @@ class Terminator:
 			ssl.load_cert_chain(cert)
 		return ssl
 
-	def sni(self, ssl_object: SSLObject, domain: str, _) -> None:
+	def sni(self, ssl_object: SSLObject, domain: str, _) -> int:
+		if domain not in self.contexts:
+			return ALERT_DESCRIPTION_UNRECOGNIZED_NAME
+		print(domain)
 		setattr(ssl_object, 'context', self.contexts[domain])
 		setattr(ssl_object, 'domain', domain)
 
