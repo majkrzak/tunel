@@ -1,5 +1,5 @@
-from asyncio import create_task, start_server, Queue, StreamWriter, StreamReader
-from ssl import SSLContext, SSLObject, PROTOCOL_TLSv1_2, ALERT_DESCRIPTION_UNRECOGNIZED_NAME
+from asyncio import Queue, StreamReader, StreamWriter, create_task, start_server
+from ssl import ALERT_DESCRIPTION_UNRECOGNIZED_NAME, PROTOCOL_TLSv1_2, SSLContext, SSLObject
 
 
 class Terminator:

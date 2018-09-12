@@ -1,5 +1,5 @@
 from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKeyWithSerialization
-from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
+from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat
 
 
 def key_pem(key: EllipticCurvePrivateKeyWithSerialization) -> str:

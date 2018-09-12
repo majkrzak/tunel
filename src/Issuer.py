@@ -4,8 +4,9 @@ from json import dumps as to_json
 
 from aiohttp import ClientSession
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric.ec import (ECDSA, EllipticCurvePrivateKey, EllipticCurvePublicKey,
-                                                          EllipticCurvePrivateKeyWithSerialization)
+from cryptography.hazmat.primitives.asymmetric.ec import (ECDSA, EllipticCurvePrivateKey,
+                                                          EllipticCurvePrivateKeyWithSerialization,
+                                                          EllipticCurvePublicKey)
 from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
 from cryptography.hazmat.primitives.hashes import SHA256
 from cryptography.hazmat.primitives.serialization import load_pem_private_key

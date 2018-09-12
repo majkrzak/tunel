@@ -1,4 +1,4 @@
-from asyncio import open_connection, gather, StreamWriter, StreamReader
+from asyncio import StreamReader, StreamWriter, gather, open_connection
 
 CHUNK_SIZE = 2048
 PORT = 80

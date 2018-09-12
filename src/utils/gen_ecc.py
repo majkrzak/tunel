@@ -1,6 +1,6 @@
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.ec import SECP256R1, generate_private_key
-from cryptography.hazmat.primitives.serialization import Encoding, PrivateFormat, NoEncryption
+from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat
 
 
 def gen_ecc() -> str:

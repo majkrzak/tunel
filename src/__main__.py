@@ -1,17 +1,16 @@
-from asyncio import get_event_loop, ensure_future, create_task
-from os import environ
+from asyncio import create_task, ensure_future, get_event_loop
 from operator import setitem
+from os import environ
 
-from .Storage import Storage
-from .Monitor import Monitor
-from .Scheduler import Scheduler
-from .Issuer import Issuer
 from .Challenger import Challenger
-from .Terminator import Terminator
+from .Issuer import Issuer
+from .Monitor import Monitor
 from .Router import Router
-from .utils.gen_ecc import gen_ecc
+from .Scheduler import Scheduler
+from .Storage import Storage
+from .Terminator import Terminator
 from .utils.call import call
-
+from .utils.gen_ecc import gen_ecc
 
 CONTEXT = environ.get('CONTEXT', '.')
 DIRECTORY = environ.get('DIRECTORY', 'https://acme-v02.api.letsencrypt.org/directory')
