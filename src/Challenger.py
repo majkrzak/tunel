@@ -10,12 +10,14 @@ class Challenger:
 	challenges: dict = {}
 
 	def __init__(self, port: int):
+		self.challenges = {}
+
 		create_task(start_server(self.handler, '', port))
 
-	def __setitem__(self, key, value):
-		self.challenges[key] = value
+	def __setitem__(self, key: str, val: str) -> None:
+		self.challenges[key] = val
 
-	def __delitem__(self, key):
+	def __delitem__(self, key: str) -> None:
 		del self.challenges[key]
 
 	async def handler(self, request: Request) -> Response:

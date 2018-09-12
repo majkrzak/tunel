@@ -1,4 +1,4 @@
-from asyncio import open_connection, gather
+from asyncio import open_connection, gather, StreamWriter, StreamReader
 
 CHUNK_SIZE = 2048
 PORT = 80
@@ -10,10 +10,10 @@ class Router:
 	def __init__(self):
 		self.routes = {}
 
-	def __setitem__(self, key, value):
-		self.routes[key] = value
+	def __setitem__(self, key: str, val: str) -> None:
+		self.routes[key] = val
 
-	async def __call__(self, domain, local_reader, local_writer):
+	async def __call__(self, domain: str, local_reader: StreamReader, local_writer: StreamWriter) -> None:
 		try:
 			remote_reader, remote_writer = await open_connection(self.routes[domain], PORT)
 			await gather(
@@ -25,7 +25,7 @@ class Router:
 				local_writer.close()
 
 	@staticmethod
-	async def pipe(reader, writer):
+	async def pipe(reader: StreamReader, writer: StreamWriter) -> None:
 		try:
 			while not reader.at_eof():
 				writer.write(await reader.read(CHUNK_SIZE))

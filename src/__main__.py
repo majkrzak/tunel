@@ -3,7 +3,7 @@ from os import environ
 from operator import setitem
 
 from .Storage import Storage
-from .DockerMonitor import DockerMonitor
+from .Monitor import Monitor
 from .Scheduler import Scheduler
 from .Issuer import Issuer
 from .Challenger import Challenger
@@ -23,7 +23,7 @@ HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 @call
 async def main():
 	storage = Storage(CONTEXT)
-	docker_monitor = DockerMonitor()
+	docker_monitor = Monitor()
 	scheduler = Scheduler()
 	issuer = Issuer(DIRECTORY, 'key' not in storage and setitem(storage, 'key', gen_ecc()) or storage['key'])
 	challenger = Challenger(HTTP_PORT)

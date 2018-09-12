@@ -14,7 +14,7 @@ class Scheduler:
 	def __init__(self):
 		self.queue = Queue()
 
-	async def __call__(self, crt: str):
+	async def __call__(self, crt: str) -> None:
 		certificate = load_pem_x509_certificate(crt.encode(), default_backend())
 		domain = next(iter(certificate.subject.get_attributes_for_oid(NameOID.COMMON_NAME))).value
 		expiration = certificate.not_valid_after

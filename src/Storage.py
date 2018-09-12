@@ -16,14 +16,14 @@ class Storage:
 			f.flush()
 		self.cache[key] = val
 
-	def __getitem__(self, key) -> str:
+	def __getitem__(self, key: str) -> str:
 		if key not in self.cache:
 			with open(self(key)) as f:
 				self.cache[key] = f.read()
 		return self.cache[key]
 
-	def __contains__(self, key) -> bool:
+	def __contains__(self, key: str) -> bool:
 		return key in self.cache or isfile(self(key))
 
-	def __call__(self, key) -> str:
+	def __call__(self, key: str) -> str:
 		return join(self.context, key)

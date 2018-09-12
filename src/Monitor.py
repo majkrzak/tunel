@@ -3,7 +3,7 @@ from aiodocker.containers import DockerContainer
 from asyncio import create_task, Queue
 
 
-class DockerMonitor:
+class Monitor:
 	docker: Docker
 	queue: Queue
 
