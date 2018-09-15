@@ -94,9 +94,8 @@ class Issuance:
 	domain: str
 
 	finalize: str
-	auth: str
 
-	http01: dict
+	challenge: dict
 
 	def __init__(self, issuer: Issuer, key: str, domain: str):
 		self.issuer = issuer
@@ -120,7 +119,7 @@ class Issuance:
 
 			async with session.get(data['authorizations'][0]) as response:
 				data = await response.json()
-				self.http01 = next((challenge for challenge in data['challenges'] if challenge['type'] == 'http-01'))
+				self.challenge = next((challenge for challenge in data['challenges'] if challenge['type'] == 'http-01'))
 
 		return self
 
@@ -133,16 +132,16 @@ class Issuance:
 				self.issuer.nonce = response.headers['Replay-Nonce']
 
 			async with session.post(
-					self.http01['url'],
-					data=self.issuer.msg(self.http01['url']),
+					self.challenge['url'],
+					data=self.issuer.msg(self.challenge['url']),
 					headers={'Content-Type': 'application/jose+json'}
 			) as response:
 				self.issuer.nonce = response.headers['Replay-Nonce']
 
-			while self.http01['status'] == 'pending':
+			while self.challenge['status'] == 'pending':
 				await sleep(1)
-				async with session.get(self.http01['url']) as response:
-					self.http01 = await response.json()
+				async with session.get(self.challenge['url']) as response:
+					self.challenge = await response.json()
 
 			async with session.post(
 					self.finalize,
@@ -164,7 +163,7 @@ class Issuance:
 
 	def __format__(self, format_spec):
 		if format_spec == 'token':
-			return self.http01['token']
+			return self.challenge['token']
 		if format_spec == 'auth':
 			return self.issuer.auth
 		raise KeyError()
