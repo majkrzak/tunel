@@ -22,7 +22,7 @@ HTTPS_PORT = int(environ.get('HTTPS_PORT', 443))
 @call
 async def main():
 	storage = Storage(CONTEXT)
-	docker_monitor = Monitor()
+	monitor = Monitor()
 	scheduler = Scheduler()
 	issuer = Issuer(DIRECTORY, 'key' not in storage and setitem(storage, 'key', gen_ecc()) or storage['key'])
 	challenger = Challenger(HTTP_PORT)
@@ -38,7 +38,7 @@ async def main():
 	@create_task
 	@call
 	async def monitor_handler():
-		async for domain, target in docker_monitor:
+		async for domain, target in monitor:
 			if domain not in storage:
 				await issue(domain)
 			terminator[domain] = storage(domain)
