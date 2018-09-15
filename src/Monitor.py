@@ -5,28 +5,26 @@ from aiodocker.containers import DockerContainer
 
 
 class Monitor:
-	docker: Docker
 	queue: Queue
 
 	def __init__(self):
-		self.docker = Docker()
 		self.queue = Queue()
 
 		create_task(self.query_running())
 		create_task(self.query_started())
 
 	async def query_running(self) -> None:
-		containers = await self.docker.containers.list()
+		containers = await Docker().containers.list()
 		for container in containers:
 			await container.show()
 			await self.handle(container)
 
 	async def query_started(self) -> None:
-		channel = self.docker.events.subscribe()
+		channel = Docker().events.subscribe()
 		while channel:
 			event = await channel.get()
 			if event['Type'] == 'container' and event['status'] == 'start':
-				container = self.docker.containers.container(event['id'])
+				container = Docker().containers.container(event['id'])
 				await container.show()
 				await self.handle(container)
 
