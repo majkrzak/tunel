@@ -1,16 +1,19 @@
 import setuptools
 
 NAME = 'tunel'
-REPOSITORY = 'https://majkrzak@bitbucket.org/majkrzak/tunel.git'
+REPOSITORY = 'https://github.com/majkrzak/tunel.git'
+
 CORE_DEPENDENCIES = [
 	'cryptography',
 	'aiodocker',
 	'aiohttp'
 ]
+
 BUILD_DEPENDECIES = [
 	'docker',
 	'wheel'
 ]
+
 DOCKERFILE = f'''
 	FROM python:3.7-slim AS build
 	COPY . .
@@ -79,7 +82,7 @@ def deploy():
 
 setuptools.setup(
 	name=NAME,
-	description='Instant Docker reverse TLS 1.2 termination proxy',
+	description='The out-of-the-box automated TLS termination reverse proxy for a docker environment.',
 	author='Piotr Majrzak',
 	author_email='petrol.91@gmail.com',
 	license='Permission to use, copy, modify, and distribute this software for any '
