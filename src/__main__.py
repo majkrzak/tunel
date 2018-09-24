@@ -59,4 +59,5 @@ async def main():
 			create_task(router(domain, reader, writer))
 
 
+get_event_loop().set_exception_handler(lambda loop, context: None)
 get_event_loop().run_forever()
